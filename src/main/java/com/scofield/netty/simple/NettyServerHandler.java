@@ -6,6 +6,8 @@ import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
 import io.netty.util.CharsetUtil;
 
+import java.util.concurrent.TimeUnit;
+
 
 //我们自定义一个Handler需要继承netty规定好的某个HandlerAdapter（规范）
 //这是我们自定义一个Handler才能成为一个Handler
@@ -15,11 +17,37 @@ public class NettyServerHandler extends ChannelInboundHandlerAdapter {
     //Object msg:就是客户端发送的数据
     @Override
     public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
-        System.out.println("服务器："+ctx);
+        //假如这里我们有一个耗时长的业务，我们应该异步执行，也就是将该业务提交该channel对应的NIOEventLoop的taskQueue中
+        //第一种方法，自定义普通任务
+        //该方式会将该线程提交到taskQueue中，然后异步执行
+        ctx.channel().eventLoop().execute(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    Thread.sleep(10 * 1000);
+                    ctx.writeAndFlush(Unpooled.copiedBuffer("hello，客户端2", CharsetUtil.UTF_8));
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+        });
+        //第二种方法，用户自定义定时任务，该任务会将该线程提交到scheduleTaskQueue中
+        ctx.channel().eventLoop().schedule(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    Thread.sleep(10 * 1000);
+                    ctx.writeAndFlush(Unpooled.copiedBuffer("hello，客户端2", CharsetUtil.UTF_8));
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+        }, 5, TimeUnit.SECONDS);
+        /*System.out.println("服务器："+ctx);
         //ByteBuf是netty提供的
         ByteBuf byteBuffer = (ByteBuf) msg;
         System.out.println("客户端发送的数据："+byteBuffer.toString(CharsetUtil.UTF_8));
-        System.out.println("客服端地址："+ctx.channel().remoteAddress());
+        System.out.println("客服端地址："+ctx.channel().remoteAddress());*/
     }
 
     //数据读取完毕
