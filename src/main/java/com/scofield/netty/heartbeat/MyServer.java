@@ -33,7 +33,7 @@ public class MyServer {
                              * long readerIdleTime  表示多长时间没有读，就会发送一个心跳检测包检测是否连接
                              * long writerIdleTime  表示多长时间没有写，就会发送一个心跳检测包检测是否连接
                              * long allIdleTime  表示多长时间既没有读也没有写，就会发送一个心跳检测包检测是否连接
-                             * 当IdleStateHandler触发以后，就会传给管道的下一个handler去处理，通过调用下一个handler的userEventTrigger，
+                             * 当IdleStateHandler触发以后，就会传给管道的下一个handler去处理，通过调用下一个handler的userEventTriggered，
                              * 在该方法中去处理IdleStateHandler（读空闲，写空闲，读写空闲）
                              */
                             pipeline.addLast(new IdleStateHandler(3,5,7, TimeUnit.SECONDS));
