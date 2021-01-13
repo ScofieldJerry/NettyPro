@@ -1,17 +1,25 @@
-package com.scofield.netty.codec;
+package com.scofield.netty.codec2;
 
+import com.scofield.netty.codec.StudentPOJO;
 import io.netty.buffer.ByteBuf;
-import io.netty.buffer.Unpooled;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
 import io.netty.util.CharsetUtil;
+
+import java.util.Random;
 
 public class NettyClientHandler extends ChannelInboundHandlerAdapter {
     //通道就绪时，就会触发
     @Override
     public void channelActive(ChannelHandlerContext ctx) throws Exception {
-        StudentPOJO.Student student = StudentPOJO.Student.newBuilder().setId(123).setName("张三").build();
-        ctx.writeAndFlush(student);
+        int i = new Random().nextInt(3);
+        MyDateInfo.MyMessage myMessage = null;
+        if (i == 0) {
+            myMessage = MyDateInfo.MyMessage.newBuilder().setDateType(MyDateInfo.MyMessage.DateType.StudentType).setStudent(MyDateInfo.Student.newBuilder().setId(1).setName("鲁智深").build()).build();
+        } else {
+            myMessage = MyDateInfo.MyMessage.newBuilder().setDateType(MyDateInfo.MyMessage.DateType.WorkerType).setWorker(MyDateInfo.Worker.newBuilder().setId(456).setName("隔壁老王").build()).build();
+        }
+        ctx.writeAndFlush(myMessage);
     }
 
     //当通道有读取事件时会触发

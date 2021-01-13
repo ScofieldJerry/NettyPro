@@ -1,4 +1,4 @@
-package com.scofield.netty.codec;
+package com.scofield.netty.codec2;
 
 import io.netty.bootstrap.Bootstrap;
 import io.netty.channel.ChannelFuture;

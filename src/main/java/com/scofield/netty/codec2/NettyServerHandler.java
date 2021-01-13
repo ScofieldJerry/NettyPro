@@ -1,22 +1,26 @@
-package com.scofield.netty.codec;
+package com.scofield.netty.codec2;
 
+import com.scofield.netty.codec.StudentPOJO;
 import io.netty.buffer.Unpooled;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
+import io.netty.channel.SimpleChannelInboundHandler;
 import io.netty.util.CharsetUtil;
-
-import java.util.concurrent.TimeUnit;
 
 //我们自定义一个Handler需要继承netty规定好的某个HandlerAdapter（规范）
 //这是我们自定义一个Handler才能成为一个Handler
-public class NettyServerHandler extends ChannelInboundHandlerAdapter {
-    //读取数据的事件（这里我们可以读取客户端发送的消息）
-    //ChannelHandlerContext：上下文对象，含有pipeline， channel，地址
-    //Object msg:就是客户端发送的数据
+public class NettyServerHandler extends SimpleChannelInboundHandler<MyDateInfo.MyMessage> {
+
     @Override
-    public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
-        StudentPOJO.Student student = (StudentPOJO.Student) msg;
-        System.out.println("学生id" + student.getId() + "学生姓名" + student.getName());
+    protected void channelRead0(ChannelHandlerContext ctx, MyDateInfo.MyMessage msg) throws Exception {
+        MyDateInfo.MyMessage.DateType dateType = msg.getDateType();
+        if (dateType == MyDateInfo.MyMessage.DateType.StudentType) {
+            System.out.println(msg.getStudent().getId() + "姓名" + msg.getStudent().getName());
+        } else if (dateType == MyDateInfo.MyMessage.DateType.WorkerType) {
+            System.out.println(msg.getWorker().getId() + "姓名" + msg.getWorker().getName());
+        } else {
+            System.out.println("数据有误");
+        }
     }
 
     //数据读取完毕

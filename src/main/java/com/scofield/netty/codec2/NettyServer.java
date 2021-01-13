@@ -1,5 +1,6 @@
-package com.scofield.netty.codec;
+package com.scofield.netty.codec2;
 
+import com.scofield.netty.codec.StudentPOJO;
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.*;
 import io.netty.channel.nio.NioEventLoopGroup;
@@ -27,7 +28,7 @@ public class NettyServer {
                         @Override
                         protected void initChannel(SocketChannel ch) throws Exception {
                             ch.pipeline()
-                            .addLast(new ProtobufDecoder(StudentPOJO.Student.getDefaultInstance()))
+                            .addLast(new ProtobufDecoder(MyDateInfo.MyMessage.getDefaultInstance()))
                                     .addLast(new NettyServerHandler());
                         }
                     });
